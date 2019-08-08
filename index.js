@@ -1,49 +1,5 @@
-/**
- * yuanxin
- */
-
-// (function () {
-// 	// 准备资源 汪洋
-	// const context = document.getElementById('content').getContext('2d');
-	// const heroImg = new Image();
-
-// 	// 画图 袁鑫
-// 	heroImg.onload = function () {
-// 		var imgPos = {
-// 			x: 0,
-// 			y: 0,
-// 			width: 32,
-// 			height: 32
-// 		};
-
-// 		var rect = {
-// 			x: 0,
-// 			y: 0,
-// 			width: 40,
-// 			height: 40
-// 		};
-
-// 		context
-// 			.drawImage(
-// 				heroImg,
-// 				imgPos.x,
-// 				imgPos.y,
-// 				imgPos.width,
-// 				imgPos.height,
-// 				rect.x,
-// 				rect.y,
-// 				rect.width,
-// 				rect.height
-// 			);
-// 	};
-
-// 	heroImg.src = './hero.png';
-// })();
-
-
 
 (function () {
-	// 我是汪洋老师
 	function prepare() {
 
 		const imgTask = (img, src) => {
@@ -76,7 +32,6 @@
 	}
 
 
-	// 我是袁鑫老师
 	function drawHero(context, heroImg, allSpriteImg) {
 
 		var draw = function () {
@@ -94,52 +49,62 @@
 				);
 		}
 
-		var hero = {
-			img: heroImg,
-			context: context,
-			imgPos: {
+		function Hero (initPos) {
+			this.img = heroImg;
+			this.context = context;
+			this.imgPos = {
 				x: 0,
 				y: 0,
 				width: 32,
 				height: 32
-			},
-
-			rect: {
-				x: 0,
-				y: 0,
+			};
+			this.rect = {
+				x: initPos.x,
+				y: initPos.y,
 				width: 40,
 				height: 40
-			},
+			}
+		}
+		Hero.prototype.draw = draw;
 
-			draw: draw
-		};
-
-		var monster = {
-			img: allSpriteImg,
-			context: context,
-			imgPos: {
+		function Monster (initPos) {
+			this.img = allSpriteImg;
+			this.context = context;
+			this.imgPos = {
 				x: 858,
 				y: 529,
 				width: 32,
 				height: 32
-			},
-
-			rect: {
-				x: 100,
-				y: 100,
+			}
+			this.rect = {
+				x: initPos.x,
+				y: initPos.y,
 				width: 40,
 				height: 40
-			},
+			}
+		}
+		Monster.prototype.draw = draw;
 
-			draw: draw
-		};
+		function RedMonster(initPos) {
+			
+			Monster.call(this,initPos)
+			this.imgPos.y = 495;
+			
+		}
 
+		RedMonster.prototype = Object.create(Monster.prototype);
+
+		var hero = new Hero({x:0,y:0});
+		var monster = new Monster({x:100,y:100});
+		var monster1 = new RedMonster({x:150,y:150})
 		hero.draw();
 		monster.draw();
+		monster1.draw();
 
 
 		window.addEventListener('keyup',function(e) {
-			var step = 9;
+			var step = 9,
+				attackDistance = 20;
 			switch (e.keyCode){
 				case 38://上
 					if (hero.rect.y <= 0) {
@@ -192,6 +157,14 @@
 					}
 					
 					hero.draw();
+
+					if (monster1.rect.x - hero.rect.x - hero.rect.width <= attackDistance
+						&& hero.rect.y + hero.rect.height >= monster1.rect.y
+						&& hero.rect.y <= monster1.rect.y + monster1.rect.height
+						) {
+						context.clearRect(monster1.rect.x,monster1.rect.y,monster1.rect.width,monster1.rect.height);
+					}
+				
 					break;
 				case 40://下
 
